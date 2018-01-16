@@ -1,0 +1,14 @@
+.left {
+    float: left; 
+    width: 30%;
+}
+
+.right {
+    float: right; 
+    width: 70%
+}
+
+.stack-trace {
+    width: 32%;
+    height: 10%;
+}
