@@ -21,8 +21,8 @@ class MachineToken {
 		this.link = null;
 		
 		this.rewriteFlag = RewriteFlag.EMPTY;
-		this.dataStack = [CompData.PROMPT];
-		this.boxStack = [];
+		this.dataStack = [];
+		this.boxStack = [BoxData.PROMPT];
 	}
 }
 
@@ -35,13 +35,12 @@ var CompData = {
 var RewriteFlag = {
 	EMPTY: '□',
 	F_LAMBDA: '<λ>',
-	F_OP: '<$>',
-	F_IF: '<if>',
-	F_C: '<C>',
 	F_PROMO: '<!>',
-	F_RECUR: '<μ>',
 }
 
 var BoxData = {
+    PROMPT: '*',
+    PROMO: '!',
+    DER: '◇',
 }
 

@@ -6,11 +6,17 @@ class Promo extends Expo {
 
 	transition(token, link) {
 		if (link.to == this.key) {
-			token.rewriteFlag = RewriteFlag.F_PROMO;
-			return this.findLinksOutOf(null)[0];
-		}
-		else if (link.from == this.key) {
-			return this.findLinksInto(null)[0];
+			var data = token.boxStack.last();
+			if (data == BoxData.PROMPT) {
+				token.boxStack.pop();
+				token.boxStack.push(BoxData.PROMO);
+				token.forward = false;
+				return link;
+			}
+			else {
+				token.rewriteFlag = RewriteFlag.F_PROMO;
+				return this.findLinksOutOf(null)[0];
+			}
 		}
 	}
 
@@ -20,6 +26,7 @@ class Promo extends Expo {
 			var prev = this.graph.findNodeByKey(this.findLinksInto(null)[0].from);
 
 			if (prev instanceof Der) {
+				token.boxStack.pop();
 				var oldGroup = this.group;
 				oldGroup.moveOut(); // this.group is a box-wrapper
 				oldGroup.deleteAndPreserveLink();
@@ -33,7 +40,8 @@ class Promo extends Expo {
 					var link = token.boxStack.pop();
 					var inLinks = prev.findLinksInto(null);
 					if (inLinks.length == 1) { 
-						// this will not happen as the C-node should have taken care of it
+						var inLink = prev.findLinksInto(null)[0];
+						prev.deleteAndPreserveInLink();
 					}
 					else {
 						var newBoxWrapper = this.group.copy().addToGroup(this.group.group);
@@ -41,11 +49,11 @@ class Promo extends Expo {
 						prev.findLinksOutOf(null)[0].changeTo(newBoxWrapper.prin.key, prev.findLinksOutOf(null)[0].toPort);
 						link.changeTo(this.key, "s");
 					}
-					token.rewriteFlag = RewriteFlag.F_PROMO;
+
+					token.rewrite = true;
+					return link;
 				}
 			}
-			token.rewrite = true;
-			return nextLink;
 		}
 		
 		else if (token.rewriteFlag == RewriteFlag.EMPTY) {

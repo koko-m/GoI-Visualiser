@@ -1,3 +1,4 @@
+// OBSOLETE
 class UnOp extends Node {
 
 	constructor(text) {

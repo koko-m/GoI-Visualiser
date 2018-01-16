@@ -37,7 +37,8 @@ require(["jquery", "renderer", "goi-machine"],
 				$("#flag").val("");
 				$("#boxStack").val("");
 				var source = $("#ta-program").val();
-				machine.compile(source);
+				var strategy = $("#sm-strategy option:selected").val();
+				machine.compile(source, strategy);
 				draw();
 				finished = false;
 			});
@@ -53,7 +54,7 @@ require(["jquery", "renderer", "goi-machine"],
 		});
 
 		$("#btn-info").click(function (event) {
-		      alert("'λ' = \\lambda\n'⊞' = \\sq+\n'⊠' = \\sq*\n'⊡' = \\sq.");
+		      alert("<var> := {variables}\n<expr> ::= <var>  #variables\n         | (\\lambda <var>. <expr>)  # abstraction\n         | (<expr> <expr>)  # application\n");
 		});
 
 		$('#cb-show-key').change(function() {

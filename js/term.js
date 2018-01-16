@@ -36,15 +36,26 @@ class Term extends Group {
 		for (let leftAux of leftAuxs) {
 			for (let rightAux of rightAuxs) {
 				if (leftAux.name == rightAux.name) {
-					var con = new Contract(leftAux.name).addToGroup(group);
-
 					var outLink = leftAux.findLinksOutOf(null)[0];
+					var con; // try to reuse existing contraction nodes
+
 					if (typeof outLink != 'undefined') {
-						outLink.changeFrom(con.key, outLink.fromPort);
+						var next = group.nodes[0].graph.findNodeByKey(outLink.to);
+						if (next instanceof Contract)
+							con = next;
+						else {
+							con = new Contract(leftAux.name).addToGroup(group);
+							new Link(leftAux.key, con.key, "n", "s").addToGroup(group);
+							outLink.changeFrom(con.key, outLink.fromPort);
+						}
+					}
+					else {
+						con = new Contract(leftAux.name).addToGroup(group);
+						new Link(leftAux.key, con.key, "n", "s").addToGroup(group);
 					}
 
 					new Link(rightAux.key, con.key, "n", "s").addToGroup(group);
-					new Link(leftAux.key, con.key, "n", "s").addToGroup(group);
+					// new Link(leftAux.key, con.key, "n", "s").addToGroup(group);
 					newAuxs.splice(newAuxs.indexOf(leftAux), 1);
 					newAuxs.splice(newAuxs.indexOf(rightAux), 1);
 					newAuxs.push(con);

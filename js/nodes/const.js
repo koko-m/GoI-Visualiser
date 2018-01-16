@@ -1,3 +1,4 @@
+// OBSOLETE
 class Const extends Node {
 
 	constructor(name) {

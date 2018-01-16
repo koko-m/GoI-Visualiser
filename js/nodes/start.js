@@ -5,7 +5,7 @@ class Start extends Node {
 	}
 	
 	transition(token) {
-		if (token.link == null && token.dataStack.last() == CompData.PROMPT) {
+		if (token.link == null) {
 			token.forward = true;
 			return this.findLinksOutOf(null)[0];
 		}

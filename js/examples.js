@@ -1,8 +1,4 @@
-var fact_prog = 
-  'let fact = rec f. λx.\n'
-+ '  if (x <= 1)\n'
-+ '  then 1\n'
-+ '  else (x * (f (x - 1)))\n'
-+ 'in\n'
-+ '\n'
-+ 'fact 4';
+var dup_ex = '((λf. λx. f (f x)) ((λy. y) (λz. z))) (λw. w)';
+var div_ex = '(λx. λy. y) ((λx. x x) (λx. x x))';
+var nonval_ex = '((λf. λx. f (f x)) (λy. y)) (λz. z)';
+var open_ex = '(λx. (λy. y (y x)) (λz. x)) (λw. w)';

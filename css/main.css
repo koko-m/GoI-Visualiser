@@ -3,6 +3,17 @@
     width: 30%;
 }
 
+.left-left {
+    float: left; 
+    width: 45%;
+    margin-top: 5%;
+}
+
+.left-right {
+    float: right; 
+    width: 50%;
+}
+
 .right {
     float: right; 
     width: 70%

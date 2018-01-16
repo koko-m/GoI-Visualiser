@@ -1,3 +1,4 @@
+// GARBAGE COLLECTION TURNED OFF
 class GC {
 
 	constructor(graph) {

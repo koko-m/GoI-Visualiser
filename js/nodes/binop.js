@@ -1,3 +1,4 @@
+// OBSOLETE
 class BinOp extends Node {
 
 	constructor(text) {

@@ -26,7 +26,7 @@ class Abs extends Node {
 			token.rewriteFlag = RewriteFlag.EMPTY;
 
 			var app = this.graph.findNodeByKey(this.findLinksInto("s")[0].from);
-			if (app instanceof App) {
+			if ((app instanceof AppNeed) || (app instanceof	AppLRValue) || (app instanceof AppRLValue)) {
 				// M rule
 				var appLink = app.findLinksInto(null)[0];
 				var appOtherLink = app.findLinksOutOf("e")[0];

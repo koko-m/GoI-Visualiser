@@ -4,6 +4,13 @@ class Der extends Expo {
 		super(null, "D", name);
 	}
 
+	transition(token, link) {
+		if (link.to == this.key) {
+			token.boxStack.push(BoxData.DER);
+			return this.findLinksOutOf(null)[0];
+		}
+	}
+
 	copy() {
 		var der = new Der(this.name);
 		der.text = this.text;

@@ -1,3 +1,4 @@
+// OBSOLETE
 class If extends Node {
 
 	constructor() {

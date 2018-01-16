@@ -1,3 +1,4 @@
+// OBSOLETE
 var UnOpType = {
 	Not: 0,
 }

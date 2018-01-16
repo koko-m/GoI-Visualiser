@@ -1,5 +1,11 @@
 var graph = null;
 
+var EvalStr = {
+	Need: "need_eval",
+	LRValue: "LR_value_eval",
+	RLValue: "RL_value_eval",
+}
+
 class GoIMachine {
 	
 	constructor() {
@@ -10,7 +16,7 @@ class GoIMachine {
 		this.count = 0;
 	}
 
-	compile(source) {
+    compile(source, strategy) {
 		const lexer = new Lexer(source + '\0');
 		const parser = new Parser(lexer);
 		const ast = parser.parse();
@@ -20,13 +26,13 @@ class GoIMachine {
 		this.count = 0;
 		// create graph
 		var start = new Start().addToGroup(this.graph.child);
-		var term = this.toGraph(ast, this.graph.child);
+		var term = this.toGraph(ast, strategy, this.graph.child);
 		new Link(start.key, term.prin.key, "n", "s").addToGroup(this.graph.child);
 		this.deleteVarNode(this.graph.child);
 	}
 
 	// translation
-	toGraph(ast, group) {
+	toGraph(ast, strategy, group) {
 		var graph = this.graph;
 
 		if (ast instanceof Identifier) {
@@ -38,7 +44,7 @@ class GoIMachine {
 			var param = ast.param;
 			var wrapper = BoxWrapper.create().addToGroup(group);
 			var abs = new Abs().addToGroup(wrapper.box);
-			var term = this.toGraph(ast.body, wrapper.box);
+			var term = this.toGraph(ast.body, strategy, wrapper.box);
 			new Link(wrapper.prin.key, abs.key, "n", "s").addToGroup(wrapper);
 
 			new Link(abs.key, term.prin.key, "e", "s").addToGroup(abs.group);
@@ -66,13 +72,18 @@ class GoIMachine {
 		} 
 
 		else if (ast instanceof Application) {
-			var app = new App().addToGroup(group);
+		    var app;
+		    switch (strategy) {
+		    case EvalStr.Need: app = new AppNeed().addToGroup(group); break;
+		    case EvalStr.LRValue: app = new AppLRValue().addToGroup(group); break;
+		    case EvalStr.RLValue: app = new AppRLValue().addToGroup(group); break;
+		    }
 			//lhs
-			var left = this.toGraph(ast.lhs, group);
+			var left = this.toGraph(ast.lhs, strategy, group);
 			var der = new Der(left.prin.name).addToGroup(group);
 			new Link(der.key, left.prin.key, "n", "s").addToGroup(group);
 			// rhs
-			var right = this.toGraph(ast.rhs, group);		
+			var right = this.toGraph(ast.rhs, strategy, group);		
 			
 			new Link(app.key, der.key, "w", "s").addToGroup(group);
 			new Link(app.key, right.prin.key, "e", "s").addToGroup(group);
@@ -80,81 +91,84 @@ class GoIMachine {
 			return new Term(app, Term.joinAuxs(left.auxs, right.auxs, group));
 		} 
 
-		else if (ast instanceof Constant) {
-			var wrapper = BoxWrapper.create().addToGroup(group);
-			var constant = new Const(ast.value).addToGroup(wrapper.box);
-			new Link(wrapper.prin.key, constant.key, "n", "s").addToGroup(wrapper);
-			return new Term(wrapper.prin, wrapper.auxs);
-		}
+		else throw new Error("your program's going too posh :p");
+		// we're working on pure lambda-terms
 
-		else if (ast instanceof BinaryOp) {
-			var binop = new BinOp(ast.name).addToGroup(group);
+		// else if (ast instanceof Constant) {
+		// 	var wrapper = BoxWrapper.create().addToGroup(group);
+		// 	var constant = new Const(ast.value).addToGroup(wrapper.box);
+		// 	new Link(wrapper.prin.key, constant.key, "n", "s").addToGroup(wrapper);
+		// 	return new Term(wrapper.prin, wrapper.auxs);
+		// }
 
-			binop.subType = ast.type;
-			var left = this.toGraph(ast.v1, group);
-			var right = this.toGraph(ast.v2, group);
+		// else if (ast instanceof BinaryOp) {
+		// 	var binop = new BinOp(ast.name).addToGroup(group);
 
-			new Link(binop.key, left.prin.key, "w", "s").addToGroup(group);
-			new Link(binop.key, right.prin.key, "e", "s").addToGroup(group);
+		// 	binop.subType = ast.type;
+		// 	var left = this.toGraph(ast.v1, group);
+		// 	var right = this.toGraph(ast.v2, group);
 
-			return new Term(binop, Term.joinAuxs(left.auxs, right.auxs, group));
-		}
+		// 	new Link(binop.key, left.prin.key, "w", "s").addToGroup(group);
+		// 	new Link(binop.key, right.prin.key, "e", "s").addToGroup(group);
 
-		else if (ast instanceof UnaryOp) {
-			var unop = new UnOp(ast.name).addToGroup(group);
-			unop.subType = ast.type;
-			var box = this.toGraph(ast.v1, group);
+		// 	return new Term(binop, Term.joinAuxs(left.auxs, right.auxs, group));
+		// }
 
-			new Link(unop.key, box.prin.key, "n", "s").addToGroup(group);
+		// else if (ast instanceof UnaryOp) {
+		// 	var unop = new UnOp(ast.name).addToGroup(group);
+		// 	unop.subType = ast.type;
+		// 	var box = this.toGraph(ast.v1, group);
 
-			return new Term(unop, box.auxs);
-		}
+		// 	new Link(unop.key, box.prin.key, "n", "s").addToGroup(group);
 
-		else if (ast instanceof IfThenElse) {
-			var ifnode = new If().addToGroup(group);
-			var cond = this.toGraph(ast.cond, group);
-			var t1 = this.toGraph(ast.t1, group);
-			var t2 = this.toGraph(ast.t2, group);
+		// 	return new Term(unop, box.auxs);
+		// }
 
-			new Link(ifnode.key, cond.prin.key, "w", "s").addToGroup(group);
-			new Link(ifnode.key, t1.prin.key, "n", "s").addToGroup(group);
-			new Link(ifnode.key, t2.prin.key, "e", "s").addToGroup(group);
+		// else if (ast instanceof IfThenElse) {
+		// 	var ifnode = new If().addToGroup(group);
+		// 	var cond = this.toGraph(ast.cond, group);
+		// 	var t1 = this.toGraph(ast.t1, group);
+		// 	var t2 = this.toGraph(ast.t2, group);
 
-			return new Term(ifnode, Term.joinAuxs(Term.joinAuxs(t1.auxs, t2.auxs, group), cond.auxs, group));
-		}
+		// 	new Link(ifnode.key, cond.prin.key, "w", "s").addToGroup(group);
+		// 	new Link(ifnode.key, t1.prin.key, "n", "s").addToGroup(group);
+		// 	new Link(ifnode.key, t2.prin.key, "e", "s").addToGroup(group);
 
-		else if (ast instanceof Recursion) {
-			var p1 = ast.param;
-			// recur term
-			var wrapper = BoxWrapper.create().addToGroup(group);
-			wrapper.prin.delete();
-			var recur = new Recur().addToGroup(wrapper);
-			wrapper.prin = recur;
-			var box = this.toGraph(ast.body, wrapper.box);
-			wrapper.auxs = Array.from(box.auxs);
-			recur.box = box;
+		// 	return new Term(ifnode, Term.joinAuxs(Term.joinAuxs(t1.auxs, t2.auxs, group), cond.auxs, group));
+		// }
 
-			new Link(recur.key, box.prin.key, "e", "s").addToGroup(wrapper);
+		// else if (ast instanceof Recursion) {
+		// 	var p1 = ast.param;
+		// 	// recur term
+		// 	var wrapper = BoxWrapper.create().addToGroup(group);
+		// 	wrapper.prin.delete();
+		// 	var recur = new Recur().addToGroup(wrapper);
+		// 	wrapper.prin = recur;
+		// 	var box = this.toGraph(ast.body, wrapper.box);
+		// 	wrapper.auxs = Array.from(box.auxs);
+		// 	recur.box = box;
 
-			var p1Used = false;
-			var auxNode1;
-			for (var i=0; i<wrapper.auxs.length; i++) {
-				var aux = wrapper.auxs[i];
-				if (aux.name == p1) {
-					p1Used = true;
-					auxNode1 = aux;
-					break;
-				}
-			}
-			if (p1Used) {
-				wrapper.auxs.splice(wrapper.auxs.indexOf(auxNode1), 1);
-			} else {
-				auxNode1 = new Weak(p1).addToGroup(wrapper.box);
-			}
-			new Link(auxNode1.key, recur.key, "nw", "w", true).addToGroup(wrapper);
+		// 	new Link(recur.key, box.prin.key, "e", "s").addToGroup(wrapper);
 
-			return new Term(wrapper.prin, wrapper.auxs);
-		}
+		// 	var p1Used = false;
+		// 	var auxNode1;
+		// 	for (var i=0; i<wrapper.auxs.length; i++) {
+		// 		var aux = wrapper.auxs[i];
+		// 		if (aux.name == p1) {
+		// 			p1Used = true;
+		// 			auxNode1 = aux;
+		// 			break;
+		// 		}
+		// 	}
+		// 	if (p1Used) {
+		// 		wrapper.auxs.splice(wrapper.auxs.indexOf(auxNode1), 1);
+		// 	} else {
+		// 		auxNode1 = new Weak(p1).addToGroup(wrapper.box);
+		// 	}
+		// 	new Link(auxNode1.key, recur.key, "nw", "w", true).addToGroup(wrapper);
+
+		// 	return new Term(wrapper.prin, wrapper.auxs);
+		// }
 	}
 
 	deleteVarNode(group) {
@@ -172,7 +186,7 @@ class GoIMachine {
 			this.count++;
 			if (this.count == 200) {
 				this.count = 0;
-				this.gc.collect();
+				// this.gc.collect();
 			}
 
 			var node;
@@ -194,7 +208,7 @@ class GoIMachine {
 					this.token.transited = true;
 				}
 				else {
-					this.gc.collect();
+					// this.gc.collect();
 					this.token.setLink(null);
 					play = false;
 					playing = false;
@@ -217,7 +231,7 @@ class GoIMachine {
 		}
 	}
 
-	printHistory(flag, dataStack, boxStack) {
+    printHistory(flag, dataStack, boxStack) {
 		flag.val(this.token.rewriteFlag + '\n' + flag.val());
 		var dataStr = this.token.dataStack.length == 0 ? '□' : Array.from(this.token.dataStack).reverse().toString() + ',□';
 		dataStack.val(dataStr + '\n' + dataStack.val());
