@@ -56,11 +56,11 @@ latest:
 - [Koko Muroya](http://www.cs.bham.ac.uk/~kxm538/) and [Dan
 R. Ghica](http://www.cs.bham.ac.uk/~drg/).
 **The dynamic Geometry of Interaction machine: a call-by-need graph
-rewriter**. In CSL 2017.
+rewriter**. In CSL 2017. [[pdf (lipics)](http://drops.dagstuhl.de/opus/volltexte/2017/7688/pdf/LIPIcs-CSL-2017-32.pdf)]
 - [Koko Muroya](http://www.cs.bham.ac.uk/~kxm538/) and [Dan
 R. Ghica](http://www.cs.bham.ac.uk/~drg/).
 **Efficient implementation of evaluation strategies via token-guided
-graph rewriting**. In WPTE 2017.
+graph rewriting**. In WPTE 2017. [[preprint pdf](http://www.cs.bham.ac.uk/~kxm538/papers/dynGoICBV.pdf)]
 
 ## Libraries
 This tool uses
