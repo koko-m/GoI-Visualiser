@@ -214,7 +214,7 @@ class GoIMachine {
 				}
 				else {
 					// this.gc.collect();
-					this.token.setLink(null);
+					// this.token.setLink(null);
 					play = false;
 					playing = false;
 					finished = true;

@@ -7,16 +7,13 @@ class Promo extends Expo {
 	transition(token, link) {
 	    if (token.interleaveStr == InterleaveStr.PO) {
 		if (link.to == this.key && link.toPort == "s") {
+		    if (token.boxStack.end) return null; // end of PO-execution
 		    var data = token.boxStack.last();
-		    if (data[0] == BoxData.PROMPT) {
-			return link; // end of PO-execution
-		    } else {
-			token.boxStack.pop();
-			// var closure = [data[0], data[1].concat([])]; // make a copy!!
-			// token.envStack.push(closure);
-			token.envStack.push(data);
-			return this.findLinksOutOf(null)[0];
-		    }
+		    token.boxStack.pop();
+		    // var closure = [data[0], data[1].concat([])]; // make a copy!!
+		    // token.envStack.push(closure);
+		    token.envStack.push(data);
+		    return this.findLinksOutOf(null)[0];
 		} else if (link.from == this.key && link.fromPort == "n") {
 		    var data = token.envStack.last();
 		    token.envStack = data[1];

@@ -80,7 +80,6 @@ class MachineToken {
 		this.dataStack = [];
 		if (interleaveStr == InterleaveStr.PO) {
 		    this.boxStack = new NestStack();
-		    this.boxStack.push([BoxData.PROMPT,null]);
 		    this.envStack = new NestStack();
 		} else {
 		    this.boxStack = [BoxData.PROMPT];
