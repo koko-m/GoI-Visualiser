@@ -4,6 +4,14 @@ Array.prototype.last = function() {
     return this[this.length-1];
 }
 
+Array.prototype.copy = function() {
+    return this.concat([]);
+}
+
+Array.prototype.end = function() {
+    return this.length == 0;
+}
+
 var play = false;
 var playing = false;
 var finished = false;
@@ -36,6 +44,7 @@ require(["jquery", "renderer", "goi-machine"],
 				$("#dataStack").val("");
 				$("#flag").val("");
 				$("#boxStack").val("");
+				$("#envStack").val("");
 				var source = $("#ta-program").val();
 				var strategy = $("#sm-strategy option:selected").val();
 				machine.compile(source, strategy);
@@ -98,7 +107,7 @@ require(["jquery", "renderer", "goi-machine"],
 
 		function next() {
 			if (!finished) {
-				machine.pass($("#flag"), $("#dataStack"), $("#boxStack"));
+			    machine.pass($("#flag"), $("#dataStack"), $("#boxStack"), $("#envStack"));
 				draw();
 			}
 		}
@@ -116,7 +125,7 @@ require(["jquery", "renderer", "goi-machine"],
 		    specialChar(this);
 		}).trigger('input');
 
-		var $stacks = $('#flag, #dataStack, #boxStack');
+		var $stacks = $('#flag, #dataStack, #boxStack, #envStack');
 		var sync = function(e){
 		    var $other = $stacks.not(this);
 		    $other.get(0).scrollTop = this.scrollTop;

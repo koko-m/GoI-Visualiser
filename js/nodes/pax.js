@@ -4,6 +4,13 @@ class Pax extends Expo {
 		super(null, "?", name);
 	}
 
+    transition(token, link) {
+	if (link.to == this.key && link.toPort == "s") {
+	    token.envStack.pop();
+	    return this.findLinksOutOf(null)[0];
+	}
+    }
+
 	copy() {
 		return new Pax(this.name);
 	}

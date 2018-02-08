@@ -5,7 +5,25 @@ class Promo extends Expo {
 	}
 
 	transition(token, link) {
-		if (link.to == this.key) {
+	    if (token.interleaveStr == InterleaveStr.PO) {
+		if (link.to == this.key && link.toPort == "s") {
+		    var data = token.boxStack.last();
+		    if (data[0] == BoxData.PROMPT) {
+			return link; // end of PO-execution
+		    } else {
+			token.boxStack.pop();
+			// var closure = [data[0], data[1].concat([])]; // make a copy!!
+			// token.envStack.push(closure);
+			token.envStack.push(data);
+			return this.findLinksOutOf(null)[0];
+		    }
+		} else if (link.from == this.key && link.fromPort == "n") {
+		    var data = token.envStack.last();
+		    token.envStack = data[1];
+		    return data[0];
+		}
+	    } else {
+		if (link.to == this.key && link.toPort == "s") {
 			var data = token.boxStack.last();
 			if (data == BoxData.PROMPT) {
 				token.boxStack.pop();
@@ -18,6 +36,7 @@ class Promo extends Expo {
 				return this.findLinksOutOf(null)[0];
 			}
 		}
+	    }
 	}
 
 	rewrite(token, nextLink) {

@@ -6,8 +6,13 @@ class Der extends Expo {
 
 	transition(token, link) {
 		if (link.to == this.key) {
+		    if (token.interleaveStr == InterleaveStr.PO) {
+			var closure = [link, token.envStack.copy()]; // make a copy!!
+			token.boxStack.push(closure);
+		    } else {
 			token.boxStack.push(BoxData.DER);
-			return this.findLinksOutOf(null)[0];
+		    }
+		    return this.findLinksOutOf(null)[0];
 		}
 	}
 

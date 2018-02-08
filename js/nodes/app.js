@@ -1,4 +1,4 @@
-// call-by-need
+// call-by-need and call-by-name
 class AppNeed extends Node {
 
 	constructor() {
@@ -6,9 +6,23 @@ class AppNeed extends Node {
 	}
 	
 	transition(token, link) {
-		if (link.to == this.key) {
+		if (link.to == this.key && link.toPort == "s") {
 			token.dataStack.push(CompData.R);
 			return this.findLinksOutOf("w")[0];
+		} else if (link.from == this.key && link.fromPort == "e") {
+		    token.dataStack.push(CompData.L);
+		    token.forward = true;
+		    return this.findLinksOutOf("w")[0];
+		} else if (link.from == this.key && link.fromPort == "w") {
+		    var data = token.dataStack.last();
+		    if (data == CompData.R) {
+			token.dataStack.pop();
+			return this.findLinksInto(null)[0];
+		    } else if (data == CompData.L) {
+			token.dataStack.pop();
+			token.forward = true;
+			return this.findLinksOutOf("e")[0];
+		    }
 		}
 	}
 

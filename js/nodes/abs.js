@@ -12,12 +12,24 @@ class Abs extends Node {
 				token.dataStack.push(CompData.LAMBDA);
 				token.forward = false;
 				return link;
-			}
-			else if (data == CompData.R) {
+			} else if (data == CompData.R) {
 				token.dataStack.pop();
-				token.rewriteFlag = RewriteFlag.F_LAMBDA;
+				if (token.interleaveStr != InterleaveStr.PO) {
+				    token.rewriteFlag = RewriteFlag.F_LAMBDA;
+				}
 				return this.findLinksOutOf(null)[0];
+			} else if (data == CompData.L) {
+			    token.dataStack.pop();
+			    token.forward = false;
+			    return this.findLinksInto("w")[0];
 			}
+		} else if (link.to == this.key && link.toPort == "w") {
+		    token.dataStack.push(CompData.L);
+		    token.forward = false;
+		    return this.findLinksInto("s")[0];
+		} else if (link.from == this.key && link.fromPort == "e") {
+		    token.dataStack.push(CompData.R);
+		    return this.findLinksInto("s")[0];
 		}
 	}
 

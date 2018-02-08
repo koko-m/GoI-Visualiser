@@ -1,6 +1,7 @@
 var graph = null;
 
 var EvalStr = {
+	Name: "name_eval",
 	Need: "need_eval",
 	LRValue: "LR_value_eval",
 	RLValue: "RL_value_eval",
@@ -11,7 +12,7 @@ class GoIMachine {
 	constructor() {
 		this.graph = new Graph();
 		graph = this.graph; // cheating!
-		this.token = new MachineToken();
+		this.token = new MachineToken(InterleaveStr.PO);
 		this.gc = new GC(this.graph);
 		this.count = 0;
 	}
@@ -22,7 +23,10 @@ class GoIMachine {
 		const ast = parser.parse();
 		// init
 		this.graph.clear();
-		this.token.reset();
+		switch (strategy) {
+		case EvalStr.Name: this.token.reset(InterleaveStr.PO); break;
+		default: this.token.reset(InterleaveStr.RF); break;
+		}
 		this.count = 0;
 		// create graph
 		var start = new Start().addToGroup(this.graph.child);
@@ -74,6 +78,7 @@ class GoIMachine {
 		else if (ast instanceof Application) {
 		    var app;
 		    switch (strategy) {
+		    case EvalStr.Name: app = new AppNeed().addToGroup(group); break;
 		    case EvalStr.Need: app = new AppNeed().addToGroup(group); break;
 		    case EvalStr.LRValue: app = new AppLRValue().addToGroup(group); break;
 		    case EvalStr.RLValue: app = new AppRLValue().addToGroup(group); break;
@@ -181,7 +186,7 @@ class GoIMachine {
 	}
 
 	// machine step
-	pass(flag, dataStack, boxStack) {	
+	pass(flag, dataStack, boxStack, envStack) {	
 		if (!finished) {
 			this.count++;
 			if (this.count == 200) {
@@ -204,7 +209,7 @@ class GoIMachine {
 				var nextLink = node.transition(this.token, this.token.link);
 				if (nextLink != null) {
 					this.token.setLink(nextLink);
-					this.printHistory(flag, dataStack, boxStack); 
+					this.printHistory(flag, dataStack, boxStack, envStack); 
 					this.token.transited = true;
 				}
 				else {
@@ -221,22 +226,36 @@ class GoIMachine {
 				var nextLink = node.rewrite(this.token, this.token.link);
 				if (!this.token.rewrite) {
 					this.token.transited = false;
-					this.pass(flag, dataStack, boxStack);
+					this.pass(flag, dataStack, boxStack, envStack);
 				}
 				else {
 					this.token.setLink(nextLink);
-					this.printHistory(flag, dataStack, boxStack);
+					this.printHistory(flag, dataStack, boxStack, envStack);
 				}
 			}
 		}
 	}
 
-    printHistory(flag, dataStack, boxStack) {
+    printHistory(flag, dataStack, boxStack, envStack) {
 		flag.val(this.token.rewriteFlag + '\n' + flag.val());
 		var dataStr = this.token.dataStack.length == 0 ? '□' : Array.from(this.token.dataStack).reverse().toString() + ',□';
 		dataStack.val(dataStr + '\n' + dataStack.val());
-		var boxStr = this.token.boxStack.length == 0 ? '□' : Array.from(this.token.boxStack).reverse().toString() + ',□';
-		boxStack.val(boxStr + '\n' + boxStack.val());
+
+		function printNestedStack(stack) {
+		    if (stack == null || stack.end) return '□';
+		    var next = stack.copy();
+		    next.pop();
+		    var data = stack.last(); console.log(data);
+		    switch (data) {
+		    case BoxData.PROMPT:
+		    case BoxData.PROMO:
+		    case BoxData.DER: return data.toString() + "," + printNestedStack(next);
+		    default:
+			return "(" + data[0].toString() + ",[" + printNestedStack(data[1]) + "])," + printNestedStack(next);
+		    }
+		}
+		boxStack.val(printNestedStack(this.token.boxStack) + '\n' + boxStack.val());
+		envStack.val(printNestedStack(this.token.envStack) + '\n' + envStack.val());
 	}
 
 }

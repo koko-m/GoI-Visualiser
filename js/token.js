@@ -1,7 +1,61 @@
+class NestStack {
+    constructor() {
+	this.end = true;
+	this.data = [null,null];
+	this.next = null;
+    }
+
+    push(data) {
+	var entry = new NestStack();
+	entry.end = this.end;
+	entry.data[0] = this.data[0];
+	entry.data[1] = this.data[1];
+	entry.next = this.next;
+	this.end = false;
+	this.data[0] = data[0];
+	this.data[1] = data[1];
+	this.next = entry;
+	return;
+    }
+
+    pop() {
+	if (this.end) {
+	    console.error("pop: logical end of NestStack");
+	} else if (this.next == null) {
+	    console.error("pop: real end of NestStack");
+	} else {
+	    this.end = this.next.end;
+	    this.data = this.next.data;
+	    this.next = this.next.next;
+	}
+	return;
+    }
+
+    last() {
+	return this.data;
+    }
+
+    copy() {
+	var entry = new NestStack();
+	entry.end = this.end;
+	if (this.data[1] == null) {
+	    entry.data = [this.data[0], this.data[1]];
+	} else {
+	    entry.data = [this.data[0], this.data[1].copy()];
+	}
+	if (this.next == null) {
+	    entry.next = null;
+	} else {
+	    entry.next = this.next.copy();
+	}
+	return entry;
+    }
+}
+
 class MachineToken {
 
-	constructor() {
-		this.reset();
+	constructor(interleaveStr) {
+		this.reset(interleaveStr);
 	}
 
 	setLink(link) {
@@ -13,7 +67,9 @@ class MachineToken {
 		}
 	}
 
-	reset() {
+	reset(interleaveStr) {
+	    this.interleaveStr = interleaveStr;
+
 		this.forward = true;
 		this.rewrite = false;
 		this.transited = false;
@@ -22,14 +78,27 @@ class MachineToken {
 		
 		this.rewriteFlag = RewriteFlag.EMPTY;
 		this.dataStack = [];
-		this.boxStack = [BoxData.PROMPT];
+		if (interleaveStr == InterleaveStr.PO) {
+		    this.boxStack = new NestStack();
+		    this.boxStack.push([BoxData.PROMPT,null]);
+		    this.envStack = new NestStack();
+		} else {
+		    this.boxStack = [BoxData.PROMPT];
+		    this.envStack = [];
+		}
 	}
+}
+
+var InterleaveStr = {
+    PO: "pass_only",
+    RF: "rewrites_first",
 }
 
 var CompData = {
 	PROMPT: '*',
 	LAMBDA: 'λ',
 	R: '@',
+	L: 'A',
 }
 
 var RewriteFlag = {

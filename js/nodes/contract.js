@@ -6,7 +6,9 @@ class Contract extends Expo {
 
 	transition(token, link) {
 		if (link.to == this.key) {
+		    if (token.interleaveStr != InterleaveStr.PO) {
 			token.boxStack.push(link);
+		    }
 			return this.findLinksOutOf(null)[0];
 		}
 		// else if (link.from == this.key && token.boxStack.length > 0) {

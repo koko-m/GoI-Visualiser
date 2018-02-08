@@ -79,6 +79,7 @@
 		<div class="left">
 			<div class="left-left">
 				<select id="sm-strategy">
+					<option value="name_eval" selected>call-by-name</option>
 					<option value="need_eval" selected>call-by-need</option>
 					<option value="LR_value_eval">left-to-right call-by-value</option>
 					<option value="RL_value_eval">right-to-left call-by-value</option>
@@ -90,12 +91,13 @@
 		</div>
 		<div align="center" class="right">
 			<textarea id="flag" rows="4" wrap="off" class="stack-trace"></textarea>
-	    	<textarea id="dataStack" rows="4" wrap="off" class="stack-trace"></textarea>
+			<textarea id="dataStack" rows="4" wrap="off" class="stack-trace"></textarea>
 			<textarea id="boxStack" rows="4" wrap="off" class="stack-trace"></textarea>
+			<textarea id="envStack" rows="4" wrap="off" class="stack-trace"></textarea>
 		</div>
 	<div>
 	<div style="clear: both;">
-		This is a simulation tool of the <em>dynamic GoI</em> abstract machine implementing call-by-need, left-to-right call-by-value and right-to-left call-by-value evaluations of the untyped lambda-calculus.</br>
+		This is a simulation tool of the <em>dynamic GoI</em> abstract machine implementing call-by-name, call-by-need, left-to-right call-by-value and right-to-left call-by-value evaluations of the untyped lambda-calculus.</br>
 		Implemented by <a href=http://www.cs.bham.ac.uk/~wtc488/ target="_blank">Steven Cheung</a> and <a href=http://www.cs.bham.ac.uk/~kxm538/ target="_blank">Koko Muroya</a>, using <a href=https://github.com/mstefaniuk/graph-viz-d3-js target="_blank">graph-viz-d3-js</a> for generating diagrams and <a href=https://github.com/tadeuzagallo/lc-js>lo-js</a> for parsing terms.<br>
 		[<a href="https://github.com/koko-m/GoI-Visualiser/wiki">read documents</a>]
 	</div>
