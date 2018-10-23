@@ -19,7 +19,9 @@ var finished = false;
 var isDraw = true;
 
 require(["jquery", "renderer", "goi-machine"],
-	function ($, renderer, machine) {
+	function ($, renderer, Machine) {
+
+		var machine = new Machine();
 
 		function clearGraph(callback) {
 			renderer.render('digraph G {\n\t\n}');

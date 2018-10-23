@@ -1,19 +1,27 @@
-class Contract extends Expo {
+define(function(require) {
+
+    var InterleaveStr = require('token/machine-token').InterleaveStr();
+    var CompData = require('token/machine-token').CompData();
+    var RewriteFlag = require('token/machine-token').RewriteFlag();
+
+    var Expo = require('nodes/expo');
+
+    class Contract extends Expo {
 
 	constructor(name) {
-		super(null, "C", name);
+	    super(null, "C", name);
 	}
 
 	transition(token, link) {
-		if (link.to == this.key) {
-		    if (token.interleaveStr != InterleaveStr.PO) {
-			token.boxStack.push(link);
-		    }
-			return this.findLinksOutOf(null)[0];
+	    if (link.to == this.key) {
+		if (token.interleaveStr != InterleaveStr.PO) {
+		    token.boxStack.push(link);
 		}
-		// else if (link.from == this.key && token.boxStack.length > 0) {
-		// 	return token.boxStack.pop();
-		// }
+		return this.findLinksOutOf(null)[0];
+	    }
+	    // else if (link.from == this.key && token.boxStack.length > 0) {
+	    // 	return token.boxStack.pop();
+	    // }
 	}
 
 	// rewrite(token, nextLink) {
@@ -38,11 +46,11 @@ class Contract extends Expo {
 	// 				token.rewriteFlag = RewriteFlag.F_C;
 	// 			}
 	// 		}
-			
+	
 	// 		token.rewrite = true;
 	// 		return nextLink;
 	// 	}
-		
+	
 	// 	else if (token.rewriteFlag == RewriteFlag.EMPTY) {
 	// 		token.rewrite = false;
 	// 		return nextLink;
@@ -50,8 +58,11 @@ class Contract extends Expo {
 	// }
 
 	copy() {
-		var con = new Contract(this.name);
-		con.text = this.text;
-		return con;
+	    var con = new Contract(this.name);
+	    con.text = this.text;
+	    return con;
 	}
-}
+    }
+
+    return Contract;
+});

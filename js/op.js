@@ -1,9 +1,11 @@
 // OBSOLETE
-var UnOpType = {
-	Not: 0,
-}
+define(function() {
 
-var BinOpType = {
+    var UnOpType = {
+	Not: 0,
+    }
+
+    var BinOpType = {
 	And: 0,
 	Or: 1,
 	Plus: 2,
@@ -11,4 +13,12 @@ var BinOpType = {
 	Mult: 4,
 	Div: 7,
 	Lte: 5,
-}
+    }
+
+    var OpType = {
+	UnOpType: UnOpType,
+	BinOpType: BinOpType,
+    }
+
+    return OpType;
+})
