@@ -20,8 +20,6 @@ Un-checking the `Draw` button stops drawing graphs. An execution can be
 paused by the `❚❚` button, resumed by the `►` button, and run
 step-by-step by the `►|` button. The `↻` button refreshes the drawing.
 
-If you do not see any graphs, try reloading several times.
-
 ## Accepted terms
 Only pure untyped lambda-terms are accepted, in the following
 grammar. You may need more parenthesis than you expect, especially for
