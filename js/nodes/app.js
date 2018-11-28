@@ -45,6 +45,7 @@ define('nodes/app/lrvalue', function(require) {
 
     var Node = require('node');
     var CompData = require('token/machine-token').CompData();
+    var BoxData = require('token/machine-token').BoxData();
     
     class AppLRValue extends Node {
 
@@ -84,6 +85,7 @@ define('nodes/app/rlvalue', function(require) {
 
     var Node = require('node');
     var CompData = require('token/machine-token').CompData();
+    var BoxData = require('token/machine-token').BoxData();
     
     class AppRLValue extends Node {
 
