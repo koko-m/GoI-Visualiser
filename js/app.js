@@ -132,6 +132,7 @@ require(["jquery", "renderer", "goi-machine"],
 		    var $other = $stacks.not(this);
 		    $other.get(0).scrollTop = this.scrollTop;
 		    $other.get(1).scrollTop = this.scrollTop;
+		    $other.get(2).scrollTop = this.scrollTop;
 		}
 		$stacks.on('scroll', sync);
 

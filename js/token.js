@@ -2,7 +2,7 @@ define('token/nest-stack', function(require) {
 
     class NestStack {
 	constructor() {
-	    this.end = true;
+	    this.end = function() { return true; };
 	    this.data = [null,null];
 	    this.next = null;
 	}
@@ -13,7 +13,7 @@ define('token/nest-stack', function(require) {
 	    entry.data[0] = this.data[0];
 	    entry.data[1] = this.data[1];
 	    entry.next = this.next;
-	    this.end = false;
+	    this.end = function() { return false; };
 	    this.data[0] = data[0];
 	    this.data[1] = data[1];
 	    this.next = entry;
@@ -21,7 +21,7 @@ define('token/nest-stack', function(require) {
 	}
 
 	pop() {
-	    if (this.end) {
+	    if (this.end()) {
 		console.error("pop: logical end of NestStack");
 	    } else if (this.next == null) {
 		console.error("pop: real end of NestStack");

@@ -287,10 +287,10 @@ define('goi-machine',
 		   dataStack.val(dataStr + '\n' + dataStack.val());
 
 		   function printNestedStack(stack) {
-		       if (stack == null || stack.end) return '□';
+		       if (stack == null || stack.end()) return '□';
 		       var next = stack.copy();
 		       next.pop();
-		       var data = stack.last(); console.log(data);
+		       var data = stack.last();
 		       switch (data) {
 		       case BoxData.PROMPT:
 		       case BoxData.PROMO:
