@@ -291,12 +291,10 @@ define('goi-machine',
 		       var next = stack.copy();
 		       next.pop();
 		       var data = stack.last();
-		       switch (data) {
-		       case BoxData.PROMPT:
-		       case BoxData.PROMO:
-		       case BoxData.DER: return data.toString() + "," + printNestedStack(next);
-		       default:
+		       if (Array.isArray(data)) {
 			   return "(" + data[0].toString() + ",[" + printNestedStack(data[1]) + "])," + printNestedStack(next);
+		       } else {
+			   return data.toString() + "," + printNestedStack(next);
 		       }
 		   }
 		   boxStack.val(printNestedStack(this.token.boxStack) + '\n' + boxStack.val());
